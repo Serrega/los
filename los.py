@@ -8,19 +8,22 @@ import difflib
 from itertools import compress
 
 
-def get_request(url: str, param: dict, cook={}, method='get') -> str:
+def get_request(url: str, param: dict, cook={}, method='get',
+                print_resp=False, print_param=True) -> str:
     try:
         response = (requests.get(url, params=param, cookies=cook)
                     if method == 'get' else
                     requests.post(url, data=param, cookies=cook))
-        # print(response.url)
+        if print_resp:
+            print(response.url)
         response.raise_for_status()
     except HTTPError as http_err:
         print(f'HTTP error occurred: {http_err}')
     except Exception as err:
         print(f'Other error occurred: {err}')
     else:
-        print(param)
+        if print_param:
+            print(param)
         return response.text
 
 

