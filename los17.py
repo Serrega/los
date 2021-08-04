@@ -33,7 +33,7 @@ def main():
 
     param = dict(id=chr(0), pw='#1||')
 
-    response = los.get_request(url, param, cook, print_resp=True)
+    response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
         print('Zombie_assassin Clear!')

