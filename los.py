@@ -6,6 +6,8 @@ import re
 import difflib
 from itertools import compress
 from typing import Callable
+#import string
+import time
 
 
 def get_request(url: str, param: dict, cook={}, method='get',
@@ -44,9 +46,11 @@ def find_key_len(url: str, payload: dict, check_func: Callable, cook={},
     while right > left + 1:
         middle = (left + right) // 2
         for k, v in sorted(payload.items()):
-            param = {k: v % f'{middle}'}
+            param = {k: v % middle}
+            t1 = time.time()
             response = get_request(url, param, cook, method, print_resp)
-        if check_func(response):
+            t2 = time.time()
+        if check_func(response, t1, t2):
             left = middle
         else:
             right = middle
@@ -54,33 +58,32 @@ def find_key_len(url: str, payload: dict, check_func: Callable, cook={},
 
 
 def find_binary(url: str, payload: dict, check_func: Callable,
-                left: int, right: int, len_of_key: int,
+                left: int, right: int,
                 cook={}, method='get', print_resp=False) -> str:
     '''
     check_func: function for check success in response
     left, right: min and max ascii code of symbol
     text: str of success in response
     '''
-    result = ''
     num_of_requests = 0
-    for i in range(1, len_of_key + 1):
-        a = left
-        b = right
-        while b - a != 0:
-            middle = a + (b - a) // 2 + 1
-            for k, v in sorted(payload.items()):
-                param = {k: v % (i, f'<{middle}')}
-                response = get_request(url, param, cook, method, print_resp)
-                num_of_requests += 1
-            if check_func(response):
-                b = middle - 1
-            else:
-                a = middle
+    payload_tmp = payload.copy()
+    while right - left != 0:
+        middle = left + (right - left) // 2 + 1
+        for k, v in sorted(payload.items()):
+            if '%s' in v:
+                payload_tmp[k] = v % middle
 
-        print(chr(a))
-        result += chr(a)
-    print('num_of_requests:', num_of_requests)
-    return result
+        t1 = time.time()
+        response = get_request(url, payload_tmp, cook, method, print_resp)
+        t2 = time.time()
+        num_of_requests += 1
+
+        if check_func(response, t1, t2):
+            right = middle - 1
+        else:
+            left = middle
+
+    return left, num_of_requests
 
 
 def find_pass_over_bits(url: str, payload: dict, len_of_key: int,

