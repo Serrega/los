@@ -4,8 +4,12 @@ import los
 from getpass import getpass
 
 
-def check_func(response: str) -> bool:
-    return response.index('admin') < response.index('rubiya')
+def check_func(*args) -> bool:
+    '''
+    check string in response of request
+    args[0]: response
+    '''
+    return args[0].index('admin') < args[0].index('rubiya')
 
 
 def main():

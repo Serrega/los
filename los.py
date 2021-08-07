@@ -67,6 +67,7 @@ def find_binary(url: str, payload: dict, check_func: Callable,
     '''
     num_of_requests = 0
     payload_tmp = payload.copy()
+
     while right - left != 0:
         middle = left + (right - left) // 2 + 1
         for k, v in sorted(payload.items()):

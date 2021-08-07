@@ -4,8 +4,12 @@ import los
 from getpass import getpass
 
 
-def check_func(response: str) -> bool:
-    return 'Hello admin' in response
+def check_func(*args) -> bool:
+    '''
+    check string in response of request
+    args[0]: response
+    '''
+    return 'Hello admin' in args[0]
 
 
 def main():

@@ -4,8 +4,12 @@ import los
 from getpass import getpass
 
 
-def check_func(response: str) -> bool:
-    return 'select id from prob_dark_eyes' in response
+def check_func(*args) -> bool:
+    '''
+    check string in response of request
+    args[0]: response
+    '''
+    return 'select id from prob_dark_eyes' in args[0]
 
 
 def main():

