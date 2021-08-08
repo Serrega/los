@@ -32,9 +32,9 @@ def get_request(url: str, param: dict, cook={}, method='get',
 
 
 def find_error(url: str, param: str, cook: dict) -> str:
-    html_responce = get_request(url, param, cook).replace(
+    html_response = get_request(url, param, cook).replace(
         '<b>', '').replace('</b>', '').replace('\n', '')
-    soup = BeautifulSoup(html_responce, 'html.parser')
+    soup = BeautifulSoup(html_response, 'html.parser')
     war = soup.find_all(string=re.compile("Warning"))
     return war
 

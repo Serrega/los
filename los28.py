@@ -2,8 +2,6 @@
 import pickle
 import los
 from getpass import getpass
-import time
-#import re
 
 
 def check_func(*args) -> bool:
