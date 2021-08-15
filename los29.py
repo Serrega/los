@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-import pickle
 import los
-from getpass import getpass
 from bs4 import BeautifulSoup
 import re
 
@@ -40,17 +38,7 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/phantom_e2e30eaf1c0b3cb61b4b72a932c849fe.php"
-
-    try:
-        with open('cooks.pickle', 'rb') as f:
-            cook = pickle.load(f)
-    except:
-        cook = {'PHPSESSID': getpass(
-            prompt='enter PHPSESSID cookie: ')}
-
-    if "location.href='../';" in los.get_request(url, {}, cook, print_param=False):
-        print('you need to login in browser')
-        exit(1)
+    cook = los.check_cookies(url)
 
     ip = los.get_request('http://ifconfig.me/ip', param={})
     print(ip)
@@ -68,9 +56,6 @@ def main():
 
     if 'Clear!' in response:
         print('Phantom Clear!')
-
-    # Save cookie
-    los.save_cookies(cook)
 
 
 if __name__ == '__main__':

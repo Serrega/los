@@ -8,10 +8,35 @@ from itertools import compress
 from typing import Callable
 #import string
 import time
+from getpass import getpass
+
+
+def check_cookies(url: str) -> str:
+    try:
+        with open('cooks.pickle', 'rb') as f:
+            cook = pickle.load(f)
+    except:
+        cook = {'PHPSESSID': getpass(
+            prompt='enter PHPSESSID cookie: ')}
+        save_cookies(cook)
+
+    if "location.href='../';" in get_request(url, {}, cook, print_param=False):
+        print('You need to login in browser or input new cookie.')
+        x = input('Do you want to enter new cookie? (y/n): ')
+        if x == 'y' or x == 'Y':
+            cook = {'PHPSESSID': getpass(
+                prompt='enter PHPSESSID cookie: ')}
+            save_cookies(cook)
+        else:
+            exit(1)
+
+    return cook
 
 
 def get_request(url: str, param: dict, cook={}, method='get',
                 print_resp=False, print_param=True) -> str:
+    if print_param:
+        print(param)
     try:
         response = (requests.get(url, params=param, cookies=cook)
                     if method == 'get' else
@@ -26,8 +51,6 @@ def get_request(url: str, param: dict, cook={}, method='get',
     except Exception as err:
         print(f'Other error occurred: {err}')
     else:
-        if print_param:
-            print(param)
         return response.text
 
 
@@ -43,13 +66,16 @@ def find_key_len(url: str, payload: dict, check_func: Callable, cook={},
                  method='get', print_resp=False) -> int:
     left = -1
     right = 32
+    payload_tmp = payload.copy()
     while right > left + 1:
         middle = (left + right) // 2
         for k, v in sorted(payload.items()):
-            param = {k: v % middle}
-            t1 = time.time()
-            response = get_request(url, param, cook, method, print_resp)
-            t2 = time.time()
+            if '%s' in v:
+                payload_tmp[k] = v % middle
+        t1 = time.time()
+        response = get_request(
+            url, payload_tmp, cook, method, print_resp)
+        t2 = time.time()
         if check_func(response, t1, t2):
             left = middle
         else:

