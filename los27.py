@@ -13,7 +13,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Blue_dragon
+    Blue_dragon 27
 
     if(preg_match('/prob|_|\./i', $_GET[id])) exit("No Hack ~_~");
     if(preg_match('/prob|_|\./i', $_GET[pw])) exit("No Hack ~_~");

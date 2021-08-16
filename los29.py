@@ -14,7 +14,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Phantom
+    Phantom 29
 
     if($_GET['joinmail']){
       if(preg_match('/duplicate/i', $_GET['joinmail'])) exit("nice try");

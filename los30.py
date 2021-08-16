@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Ouroboros
+    Ouroboros 30
 
     if(preg_match('/prob|_|\.|rollup|join|@/i', $_GET['pw'])) exit("No Hack ~_~");
     $query = "select pw from prob_ouroboros where pw='{$_GET[pw]}'";

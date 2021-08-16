@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Dragon
+    Dragon 20
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~"); 
     $query = "select id from prob_dragon where id='guest'# and pw='{$_GET[pw]}'";

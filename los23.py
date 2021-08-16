@@ -12,7 +12,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Hell_fire
+    Hell_fire 23
 
     if(preg_match('/prob|_|\.|proc|union/i', $_GET[order])) exit("No Hack ~_~");
     $query = "select id,email,score from prob_hell_fire where 1 order by {$_GET[order]}";

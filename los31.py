@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Zombie
+    Zombie 31
 
     if(preg_match('/rollup|join|ace|@/i', $_GET['pw'])) exit("No Hack ~_~");
     $query = "select pw from prob_zombie where pw='{$_GET[pw]}'";

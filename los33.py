@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Cthulhu
+    Cthulhu 33
 
     modsec.rubiya.kr server is running ModSecurity Core Rule Set v3.1.0 
     with paranoia level 1(default).

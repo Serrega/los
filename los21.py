@@ -12,7 +12,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Iron_Golem
+    Iron_Golem 21
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~");
     if(preg_match('/sleep|benchmark/i', $_GET[pw])) exit("HeHe");

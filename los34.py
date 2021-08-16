@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    DEATH
+    DEATH 34
 
     if(preg_match('/prob|_|\.|\(\)|admin/i', $_GET[id])) exit("No Hack ~_~"); 
     if(preg_match('/prob|_|\.|\(\)|admin/i', $_GET[pw])) exit("No Hack ~_~"); 

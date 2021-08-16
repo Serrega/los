@@ -12,7 +12,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Dark_eyes
+    Dark_eyes 22
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~");
     if(preg_match('/col|if|case|when|sleep|benchmark/i', $_GET[pw])) exit("HeHe");

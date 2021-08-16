@@ -12,7 +12,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Red_dragon
+    Red_dragon 26
 
     if(preg_match('/prob|_|\./i', $_GET['id'])) exit("No Hack ~_~");
     if(strlen($_GET['id']) > 7) exit("too long string");

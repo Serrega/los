@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Alien
+    Alien 32
 
     if(preg_match('/admin|and|or|if|coalesce|case|_|\.|prob|time/i', $_GET['no'])) exit("No Hack ~_~");
     $query = "select id from prob_alien where no={$_GET[no]}";

@@ -4,7 +4,7 @@ import los
 
 def main():
     '''
-    Chupacabra
+    Chupacabra 37
 
     $db = sqlite_open("./db/chupacabra.db");
     $query = "select id from member where id='{$_GET[id]}' and pw='{$_GET[pw]}'";

@@ -12,7 +12,7 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Frankenstein
+    Frankenstein 28
 
     if(preg_match('/prob|_|\.|\(|\)|union/i', $_GET[pw])) exit("No Hack ~_~");
       $query = "select id,pw from prob_frankenstein where id='frankenstein' and pw='{$_GET[pw]}'";
