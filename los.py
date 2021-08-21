@@ -54,6 +54,14 @@ def get_request(url: str, param: dict, cook={}, method='get',
         return response.text
 
 
+def resp_with_message(url: str, param: dict, cook: dict, text="select"):
+    response = get_request(url, param, cook)
+
+    soup = BeautifulSoup(response, 'html.parser')
+    message = soup.find_all(string=re.compile(text))
+    print(message)
+
+
 def find_error(url: str, param: str, cook: dict) -> str:
     html_response = get_request(url, param, cook).replace(
         '<b>', '').replace('</b>', '').replace('\n', '')

