@@ -21,7 +21,7 @@ def FindPw(pw, url, cook):
 
 def main():
     '''
-    Mummy 44
+    Mummy 44 Blind Injection
 
     if(preg_match('/master|sys|information|;|\(|\//i', $_GET['query'])) exit("No Hack ~_~");
     for($i=0;$i<strlen($_GET['query']);$i++) if(ord($_GET['query'][$i]) <= 32) exit("%01~%20 can used as whitespace at mssql");

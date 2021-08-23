@@ -93,11 +93,12 @@ def find_key_len(url: str, payload: dict, check_func: Callable, cook={},
 
 def find_binary(url: str, payload: dict, check_func: Callable,
                 left: int, right: int,
-                cook={}, method='get', print_resp=False) -> str:
+                cook={}, method='get', print_resp=False, letter=False) -> str:
     '''
     check_func: function for check success in response
     left, right: min and max ascii code of symbol
     text: str of success in response
+    letter: number or letter for middle
     '''
     num_of_requests = 0
     payload_tmp = payload.copy()
@@ -106,7 +107,10 @@ def find_binary(url: str, payload: dict, check_func: Callable,
         middle = left + (right - left) // 2 + 1
         for k, v in sorted(payload.items()):
             if '%s' in v:
-                payload_tmp[k] = v % middle
+                if letter:
+                    payload_tmp[k] = v % chr(middle)
+                else:
+                    payload_tmp[k] = v % middle
 
         t1 = time.time()
         response = get_request(url, payload_tmp, cook, method, print_resp)

