@@ -1,6 +1,7 @@
 from getpass import getpass
 import pickle
 import requests
+import os
 
 
 def check_cookies(url: str) -> str:
@@ -9,10 +10,12 @@ def check_cookies(url: str) -> str:
             cook = pickle.load(f)
     except:
         cook = {'PHPSESSID': getpass('enter PHPSESSID cookie: ')}
+        print(cook, '\n')
         save_cookies(cook)
 
     if "location.href='../';" in (requests.get(url, cookies=cook)).text:
-        print('You need to login in browser or input new cookie.')
+        print('You need to login in browser and input new cookie.\nRestart program')
+        os.system("rm cooks.pickle")
         exit(1)
         
     return cook

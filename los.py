@@ -32,7 +32,8 @@ def find_key_len(url: str, payload: dict, check_func: Callable, cook={},
         middle = (left + right) // 2
         for k, v in sorted(payload.items()):
             if '%s' in v:
-                payload_tmp[k] = v % middle
+                #payload_tmp[k] = v % middle
+                payload_tmp[k] = v.replace('%s', str(middle))
         t1 = time.time()
         response = req.my_request(
             url, payload_tmp, cook, method, print_resp, 1)

